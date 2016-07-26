@@ -1,0 +1,10 @@
+version: "2"
+services:
+  db:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: retrosheet_raw
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+

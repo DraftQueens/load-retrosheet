@@ -51,4 +51,3 @@ $ ssh -f user@52.201.41.65 -L 3000:draftqueens.c3s7xotupned.us-east-1.rds.amazon
 This will forward port 3306 of 'draftqueens.c3s7xotupned.us-east-1.rds.amazonaws.com'
 (as resolved by the SSH proxy at 52.201.41.65) to port 3000 on your local
 machine. Then, point your `simple-db-migrate.conf` file at localhost:3000.
-

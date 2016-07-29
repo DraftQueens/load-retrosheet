@@ -3,58 +3,66 @@ SQL_UP = u"""
 CREATE TABLE `team` (
   `id`   INTEGER(4) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `year` SMALLINT(2)         NOT NULL,
-  `code` VARCHAR(3)          NOT NULL,
-  CONSTRAINT UNIQUE (`year`, `code`)
+  `code` VARCHAR(3)          NOT NULL
 );
+CREATE UNIQUE INDEX `team_id_uindex` ON `team` (`id`);
+CREATE UNIQUE INDEX `team_year_code_uindex` ON `team` (`year`, `code`);
 
 CREATE TABLE `game` (
   `id`           INTEGER(4) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `home_team_id` INTEGER(4) UNSIGNED NOT NULL REFERENCES `team` (`id`)
 );
+CREATE UNIQUE INDEX `game_id_uindex` ON `game` (`id`);
 
 CREATE TABLE `record` (
   `id`      BIGINT(8) UNSIGNED  NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `game_id` INTEGER(4) UNSIGNED NOT NULL REFERENCES `game` (`id`),
-  `seq_no`  INTEGER(4) UNSIGNED NOT NULL,
-  CONSTRAINT UNIQUE (`game_id`, `seq_no`)
+  `seq_no`  INTEGER(4) UNSIGNED NOT NULL
 );
+CREATE UNIQUE INDEX `record_id_uindex` ON `record` (`id`);
+CREATE UNIQUE INDEX `record_game_id_seq_no_uindex` ON `record` (`game_id`, `seq_no`);
 
 CREATE TABLE `id` (
   `record_id`     BIGINT(8) UNSIGNED NOT NULL PRIMARY KEY REFERENCES `record` (`id`),
   `retrosheet_id` CHAR(12)           NOT NULL
 );
+CREATE UNIQUE INDEX `id_record_id_uindex` ON `id` (`record_id`);
 
 CREATE TABLE `version` (
-  `record_id` BIGINT(8) UNSIGNED   NOT NULL PRIMARY KEY REFERENCES `record` (`id`),
+  `record_id` BIGINT(8) UNSIGNED   NOT NULL REFERENCES `record` (`id`),
   `version`   SMALLINT(2) UNSIGNED NOT NULL
 );
+CREATE UNIQUE INDEX `version_record_id_uindex` ON `version` (`record_id`);
 
 CREATE TABLE `info` (
-  `record_id` BIGINT(8) UNSIGNED NOT NULL PRIMARY KEY REFERENCES `record` (`id`),
+  `record_id` BIGINT(8) UNSIGNED NOT NULL REFERENCES `record` (`id`) PRIMARY KEY,
   `type`      VARCHAR(255)       NOT NULL,
   `data`      VARCHAR(255)       NOT NULL
 );
+CREATE UNIQUE INDEX `info_record_id_uindex` ON `info` (`record_id`);
 
 CREATE TABLE `start` (
-  `record_id`            BIGINT(8) UNSIGNED  NOT NULL PRIMARY KEY REFERENCES `record` (`id`),
+  `record_id`            BIGINT(8) UNSIGNED  NOT NULL REFERENCES `record` (`id`) PRIMARY KEY,
   `retrosheet_player_id` CHAR(8)             NOT NULL,
   `player_name`          VARCHAR(255)        NOT NULL,
   `is_home`              TINYINT(1) UNSIGNED NOT NULL,
   `batting_pos`          TINYINT(1) UNSIGNED NOT NULL,
   `fielding_pos`         TINYINT(1) UNSIGNED NOT NULL
 );
+CREATE UNIQUE INDEX `start_record_id_uindex` ON `start` (`record_id`);
 
 CREATE TABLE `sub` (
-  `record_id`            BIGINT(8) UNSIGNED  NOT NULL PRIMARY KEY REFERENCES `record` (`id`),
+  `record_id`            BIGINT(8) UNSIGNED  NOT NULL REFERENCES `record` (`id`) PRIMARY KEY,
   `retrosheet_player_id` CHAR(8)             NOT NULL,
   `player_name`          VARCHAR(255)        NOT NULL,
   `is_home`              TINYINT(1) UNSIGNED NOT NULL,
   `batting_pos`          TINYINT(1) UNSIGNED NOT NULL,
   `fielding_pos`         TINYINT(1) UNSIGNED NOT NULL
 );
+CREATE UNIQUE INDEX `sub_record_id_uindex` ON `sub` (`record_id`);
 
 CREATE TABLE `play` (
-  `record_id`            BIGINT(8) UNSIGNED   NOT NULL PRIMARY KEY REFERENCES `record` (`id`),
+  `record_id`            BIGINT(8) UNSIGNED   NOT NULL REFERENCES `record` (`id`) PRIMARY KEY,
   `inning`               SMALLINT(2) UNSIGNED NOT NULL,
   `is_bottom_of_inning`  TINYINT(1) UNSIGNED  NOT NULL,
   `retrosheet_batter_id` CHAR(8)              NOT NULL,
@@ -64,33 +72,54 @@ CREATE TABLE `play` (
   COMMENT 'empty string means missing',
   `play`                 VARCHAR(255)         NOT NULL
 );
+CREATE UNIQUE INDEX `play_record_id_uindex` ON `play` (`record_id`);
 
 CREATE TABLE `badj` (
-  `record_id`            BIGINT(8) UNSIGNED NOT NULL PRIMARY KEY REFERENCES `record` (`id`),
+  `record_id`            BIGINT(8) UNSIGNED NOT NULL REFERENCES `record` (`id`) PRIMARY KEY,
   `retrosheet_player_id` CHAR(8)            NOT NULL,
   `hand`                 CHAR(1)            NOT NULL
 );
+CREATE UNIQUE INDEX `badj_record_id_uindex` ON `badj` (`record_id`);
 
 CREATE TABLE `padj` (
-  `record_id`            BIGINT(8) UNSIGNED NOT NULL PRIMARY KEY REFERENCES `record` (`id`),
+  `record_id`            BIGINT(8) UNSIGNED NOT NULL REFERENCES `record` (`id`) PRIMARY KEY,
   `retrosheet_player_id` CHAR(8)            NOT NULL,
   `hand`                 CHAR(1)            NOT NULL
 );
+CREATE UNIQUE INDEX `padj_record_id_uindex` ON `padj` (`record_id`);
 
 CREATE TABLE `ladj` (
-  `record_id` BIGINT(8) UNSIGNED NOT NULL PRIMARY KEY REFERENCES `record` (`id`)
+  `record_id` BIGINT(8) UNSIGNED NOT NULL REFERENCES `record` (`id`) PRIMARY KEY
 );
+CREATE UNIQUE INDEX `ladj_record_id_uindex` ON `ladj` (`record_id`);
 
 CREATE TABLE `data` (
-  `record_id` BIGINT(8) UNSIGNED NOT NULL PRIMARY KEY REFERENCES `record` (`id`),
+  `record_id` BIGINT(8) UNSIGNED NOT NULL REFERENCES `record` (`id`) PRIMARY KEY,
   `type`      VARCHAR(15)        NOT NULL,
   `data`      VARCHAR(255)       NOT NULL
 );
+CREATE UNIQUE INDEX `data_record_id_uindex` ON `data` (`record_id`);
 
 CREATE TABLE `com` (
-  `record_id` BIGINT(8) UNSIGNED NOT NULL PRIMARY KEY REFERENCES `record` (`id`),
+  `record_id` BIGINT(8) UNSIGNED NOT NULL REFERENCES `record` (`id`) PRIMARY KEY,
   `comment`   TEXT               NOT NULL
 );
+CREATE UNIQUE INDEX `com_record_id_uindex` ON `com` (`record_id`);
+
+CREATE TABLE retrosheet_event_raw.player
+(
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    retrosheet_id CHAR(8) NOT NULL,
+    team_code CHAR(3) NOT NULL,
+    year SMALLINT(2) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    first_name VARCHAR(255) NOT NULL,
+    position CHAR(2) NOT NULL,
+    bats TINYINT(1) NOT NULL,
+    throws TINYINT(1) NOT NULL
+);
+CREATE UNIQUE INDEX player_id_uindex ON retrosheet_event_raw.player (id);
+CREATE UNIQUE INDEX player_retrosheet_id_team_code_year_uindex ON retrosheet_event_raw.player (retrosheet_id, team_code, year)
 """
 
 SQL_DOWN = u"""
@@ -108,5 +137,5 @@ DROP TABLE `padj`;
 DROP TABLE `ladj`;
 DROP TABLE `data`;
 DROP TABLE `com`;
+DROP TABLE `player`;
 """
-

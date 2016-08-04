@@ -1,0 +1,7 @@
+-r requirements.txt
+
+# installed directly
+yoyo-migrations==5.0.3
+
+# required by yoyo-migrations
+Unidecode==0.04.19

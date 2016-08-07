@@ -29,7 +29,7 @@ DATA_FIELDS = {
         Field('retrosheet_batter_id', str),
         Field('count', str),
         Field('pitches', str),
-        Field('play', str)),
+        Field('event', str)),
     'badj': (Field('retrosheet_player_id', str), Field('hand', str)),
     'padj': (Field('retrosheet_player_id', str), Field('hand', str)),
     'ladj': (),

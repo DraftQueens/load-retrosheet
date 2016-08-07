@@ -46,7 +46,7 @@ def parse_args():
     arg_parser.add_argument('--host', default='127.0.0.1', dest='host')
     arg_parser.add_argument('--port', type=int, default=3306, dest='port')
     arg_parser.add_argument('--database', '-db',
-                            default='retrosheet_event_raw', dest='database')
+                            default='retrosheet_raw', dest='database')
     arg_parser.add_argument('--username', '-u', required=True, dest='username')
     arg_parser.add_argument('--password', '-p', required=True, dest='password')
 

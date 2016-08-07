@@ -34,7 +34,7 @@ CREATE TABLE `player`
   CONSTRAINT FOREIGN KEY `player_id_team_year_code_fk` (`year`, `team_code`) REFERENCES `team` (`year`, `code`)
 );
 CREATE UNIQUE INDEX `player_retrosheet_team_code_year_uindex` ON `player` (`retrosheet_id`, `team_code`, `year`);
-""", "DROP TABLE `team`;"),
+""", "DROP TABLE `player`;"),
     step("""
 CREATE TABLE `game` (
   `id`             INTEGER(4)  UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -45,7 +45,7 @@ CREATE TABLE `game` (
   CONSTRAINT FOREIGN KEY `game_year_home_team_code_fk` (`year`, `home_team_code`) REFERENCES `team` (`year`, `code`)
 );
 CREATE UNIQUE INDEX `game_home_team_code_date_game_no_uindex` ON `game` (`home_team_code`, `date`, `game_no`);
-""", "DROP TABLE `game`"),
+""", "DROP TABLE `game`;"),
     step("""
 CREATE TABLE `record` (
   `game_home_team_code` CHAR(3) NOT NULL,
@@ -102,7 +102,7 @@ CREATE TABLE `start` (
   CONSTRAINT FOREIGN KEY `start_record_id_fk` (`game_home_team_code`, `game_date`, `game_no`, `seq_no`) REFERENCES `record` (`game_home_team_code`, `game_date`, `game_no`, `seq_no`)
 );
 CREATE INDEX `start_retrosheet_player_id_index` ON `start` (`retrosheet_player_id`);
-""", "DROP TABLE `start`;"),
+""", "DROP TABLE `start`"),
     step("""
 CREATE TABLE `sub` (
   `game_home_team_code` CHAR(3) NOT NULL,
@@ -132,7 +132,7 @@ CREATE TABLE `play` (
   COMMENT '?? means missing',
   `pitches`              VARCHAR(255)         NOT NULL
   COMMENT 'empty string means missing',
-  `play`                 VARCHAR(255)         NOT NULL,
+  `event`                 VARCHAR(255)        NOT NULL,
   CONSTRAINT PRIMARY KEY (`game_home_team_code`, `game_date`, `game_no`, `seq_no`),
   CONSTRAINT FOREIGN KEY `play_record_id_fk` (`game_home_team_code`, `game_date`, `game_no`, `seq_no`) REFERENCES `record` (`game_home_team_code`, `game_date`, `game_no`, `seq_no`)
 );
@@ -160,7 +160,7 @@ CREATE TABLE `padj` (
   CONSTRAINT PRIMARY KEY (`game_home_team_code`, `game_date`, `game_no`, `seq_no`),
   CONSTRAINT FOREIGN KEY `padj_record_id_fk` (`game_home_team_code`, `game_date`, `game_no`, `seq_no`) REFERENCES `record` (`game_home_team_code`, `game_date`, `game_no`, `seq_no`)
 );
-""", "DROP TABLE `padj`;"), 
+""", "DROP TABLE `padj`;"),
     step("""
 CREATE TABLE `ladj` (
   `game_home_team_code` CHAR(3) NOT NULL,
@@ -170,7 +170,7 @@ CREATE TABLE `ladj` (
   CONSTRAINT PRIMARY KEY (`game_home_team_code`, `game_date`, `game_no`, `seq_no`),
   CONSTRAINT FOREIGN KEY `ladj_record_id_fk` (`game_home_team_code`, `game_date`, `game_no`, `seq_no`) REFERENCES `record` (`game_home_team_code`, `game_date`, `game_no`, `seq_no`)
 );
-""", "DROP TABLE `padj`;"),
+""", "DROP TABLE `ladj`;"),
     step("""
 CREATE TABLE `data` (
   `game_home_team_code` CHAR(3) NOT NULL,

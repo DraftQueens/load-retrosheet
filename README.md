@@ -21,15 +21,15 @@ $ docker-compose up -d db
 The `-d` flag detaches the container output from the terminal so it runs in the
 background.
 
-Create the retrosheet event database with:
+Create the retrosheet database with:
 ```
-$ mysql -h 127.0.0.1 -P 3306 -uroot -proot -e 'CREATE DATABASE retrosheet_event_raw'
+$ mysql -h 127.0.0.1 -P 3306 -uroot -proot -e 'CREATE DATABASE retrosheet_raw'
 ```
 
 # Run database migrations
 We use YoYo to manage our database migrations. To run the latest migrations:
 ```
-$ yoyo apply migrations/ --database mysql://root@127.0.0.1:3306/retrosheet_event_raw -p
+$ yoyo apply --database mysql://root@127.0.0.1:3306/retrosheet_raw -p
 ```
 
 ## Create a migration
